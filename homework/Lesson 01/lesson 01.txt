@@ -1,0 +1,2 @@
+дата создания AdventureWorks2017.Person.Person - 09.01.2025 17:50:34
+объем AdventureWorksDW2017.dbo.DimPromotion - 0,008 MB
