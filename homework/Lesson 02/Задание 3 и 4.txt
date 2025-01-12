@@ -1,0 +1,35 @@
+Задание №3.
+
+ALL, OVER, JOIN
+
+Задание №4.
+
+A.
+select count(distinct PersonType)
+FROM Person.Person
+where LastName like ('M%') or EmailPromotion not like ('%1%')
+
+B.
+SELECT MAX(DiscountPct)
+FROM Sales.SpecialOffer
+WHERE DiscountPct BETWEEN '2013-01-01' AND '2014-01-01' -- Не работает
+LIMIT 3
+
+--подскажите, как правильно написать запрос.
+
+C.
+SELECT MIN(Weight), MAX(Size)
+FROM Production.Product
+
+D.
+SELECT ProductSubcategoryID, MIN(Weight), MAX(Size)
+FROM Production.Product
+GROUP BY ProductSubcategoryID;
+
+E.
+SELECT ProductSubcategoryID, Color, MIN(Weight), MAX(Size)
+FROM Production.Product
+WHERE Color is not NULL
+GROUP BY ProductSubcategoryID, Color;
+
+Подскажи, как работать с файлом 2.sql с лекции 2? Как решать задания, из предложенных вариантов?
