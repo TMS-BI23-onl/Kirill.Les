@@ -1,0 +1,49 @@
+Задание 2.
+
+1. 
+
+SELECT Color, AVG(StandardCost)
+FROM Production.Product
+GROUP BY Color
+HAVING COUNT(ProductID)>=40
+
+2.
+
+SELECT City, COUNT(AddressID) CNT
+FROM Person.Address
+GROUP BY City;
+
+3.
+
+SELECT TOP (5) ProductID, Quantity
+FROM Production.ProductInventory
+ORDER BY Quantity DESC
+
+4.
+
+SELECT Comments
+FROM Production.ProductReview 
+WHERE Rating > (SELECT AVG(Rating)
+                FROM Production.ProductReview)
+
+5.
+
+SELECT ShipRate
+FROM Purchasing.ShipMethod
+WHERE ShipRate > (SELECT MIN(ListPrice) AS MIN_PR
+                  FROM Production.Product
+				  WHERE ListPrice > 0)
+
+
+6.
+6.1
+
+SELECT BusinessEntityID 
+FROM Person.Person
+EXCEPT
+SELECT BusinessEntityID
+FROM Sales.PersonCreditCard;
+
+6.2
+
+
