@@ -1,0 +1,37 @@
+Задание №3
+
+a.
+SELECT pp.Name, pp.StandardCost
+FROM Production.Product pp JOIN Production.ProductModel ppm ON pp.ProductModelID = pp.ProductModelID
+WHERE pp.Name Like 'LL%'
+
+b.
+SELECT DISTINCT pv.Name, ss.Name
+FROM Purchasing.Vendor pv FULL JOIN Sales.Store ss ON pv.BusinessEntityID = ss.BusinessEntityID
+ORDER BY pv.Name
+
+c.
+
+
+
+Задание №2
+
+a.
+SELECT Name, ListPrice, 
+CASE WHEN StandardCost = 0 OR StandardCost = NULL THEN 'Not for sale'
+     WHEN StandardCost > 0 AND StandardCost < 100 THEN '<$100'
+	 WHEN StandardCost >= 100 AND StandardCost < 500 THEN '<$500'
+ELSE '>=5000'
+END AS PriceRange
+FROM Production.Product
+
+b.
+SELECT pv.Name, ppv.ProductID, pv.BusinessEntityID
+FROM Purchasing.ProductVendor ppv JOIN Purchasing.Vendor pv ON ppv.BusinessEntityID = pv.BusinessEntityID
+WHERE StandardPrice > 10 and (Name LIKE '%X%' or Name LIKE 'N%')
+
+c.
+SELECT pv.Name
+FROM Purchasing.ProductVendor ppv LEFT JOIN Purchasing.Vendor pv ON ppv.BusinessEntityID = pv.BusinessEntityID
+WHERE OnOrderQty is NULL
+
