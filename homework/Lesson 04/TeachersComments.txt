@@ -5,3 +5,12 @@ Well done!
 
 2c
 This is not what schema advised. Let's discuss together in class.
+
+3a
+You should be filtering by model name, now your query filters data by product name.
+
+3b
+"In one list" means in one column. You have 2.
+
+3c
+no solution
