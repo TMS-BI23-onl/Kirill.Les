@@ -1,0 +1,7 @@
+Well done!
+
+2a
+= NULL doesn't work!!!
+
+2c
+This is not what schema advised. Let's discuss together in class.
