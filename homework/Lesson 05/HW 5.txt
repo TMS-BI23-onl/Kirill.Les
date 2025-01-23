@@ -1,0 +1,28 @@
+Задание №3
+
+a.
+
+b.
+
+c.
+
+d.
+
+DELETE FROM Production.UnitMeasureTest
+
+
+Задание №4
+
+SELECT Name, COUNT(1), COUNT(name), COUNT(id), COUNT(*)
+FROM t
+GROUP BY Name
+
+Name count(1), count(name), count(id), count(*) 
+
+ null   2          null         2        2       
+  A     1           l           1        1         
+  B     1           1           1        1             
+                                   
+
+
+
