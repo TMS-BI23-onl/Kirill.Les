@@ -1,0 +1,23 @@
+3 
+a.
+SELECT *
+FROM Production.UnitMeasure
+WHERE UnitMeasureCode LIKE 'T%';
+---
+
+---
+
+SELECT DISTINCT (UnitMeasureCode)
+FROM Production.UnitMeasure;
+---
+
+SELECT DISTINCT (UnitMeasureCode)
+FROM Production.UnitMeasure
+WHERE UnitMeasureCode LIKE 'T%';
+---
+DELETE 
+FROM Production.UnitMeasureTest;
+
+Если я правильно понял твой комментарий, то вот исправления.
+Если нет, то можно подробнее, конкретно где, что не так? 
+
