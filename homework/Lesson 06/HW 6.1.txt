@@ -1,0 +1,43 @@
+-- 1
+
+-- В начале значения Row Number, Rank и Dense Rank будут одинаковыми 1. 
+Эти функции будут одинаковыми, если все значения данных столбца будут разные, т.е. не будет совпадений.
+
+-- 2A
+
+SELECT SalesOrderID, LineTotal  
+    ,AVG(LineTotal) OVER (PARTITION BY SalesOrderID) AS "Avg"  
+    ,MIN(LineTotal) OVER (PARTITION BY SalesOrderID) AS "Min"  
+    ,MAX(LineTotal) OVER (PARTITION BY SalesOrderID) AS "Max"  
+FROM Sales.SalesOrderDetail   
+WHERE SalesOrderID IN (43659,43664)
+
+-- 2B
+
+SELECT CONCAT(UPPER(LEFT (LastName, 3)), ' ', ISNULL(TerritoryGroup, ' ')) AS Login, BusinessEntityID, SalesYTD, 
+     RANK() OVER (ORDER BY SalesYTD DESC) AS SalesRank
+FROM Sales.vSalesPerson
+WHERE SalesYTD IS NOT NULL
+ORDER BY SalesRank;
+----------
+SELECT CONCAT(UPPER(LEFT (LastName, 3)), ' ', ISNULL(TerritoryGroup, ' ')) AS Login, BusinessEntityID, SalesLastYear,
+      DENSE_RANK() OVER (ORDER BY SalesLastYear) AS SalesRankLast
+FROM Sales.vSalesPerson
+WHERE SalesLastYear IS NOT NULL
+ORDER BY SalesLastYear;
+
+Надо было все сформировать в одном запросе? Возможно через объединение. 
+
+-- 2C
+
+--SELECT DATEADD(month, 1, DATEADD(day, 1 - DAY(GETDATE()), GETDATE())) AS first_day_of_next_month -- так предложил интернет;
+
+SELECT DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1)) AS Firs_day_of_next_month, 
+       CASE WHEN DATENAME(WEEKDAY, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))) IN ('Saturday', 'Sunday')
+	        THEN  CASE 
+			WHEN DATENAME(WEEKDAY, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))) =  'Saturday'
+			THEN DATEADD(DAY, 2, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))) 
+			ELSE DATEADD(DAY, 1, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1)))
+		END
+	ELSE DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))  
+	END first_weekday
