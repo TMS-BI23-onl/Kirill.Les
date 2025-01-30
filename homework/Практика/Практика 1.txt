@@ -1,0 +1,18 @@
+SELECT fio_voditeli
+FROM Voditeli
+WHERE Staj NOT IN (3, 5 , 6, 10) AND Mesto_pr LIKE(eee%);
+
+---
+SELECT #Pasport 
+FROM Voditeli
+WHERE #Pasport NOT IN (SELECT Kod Vod
+          FROM Dispech d LEFT JOIN Voditeli v ON d.kod vod = v. kod vod
+		  )
+
+
+---
+SELECT  
+FROM Avtomob a JOIN Dispech d ON a.kod avto = d.kod avto
+               JOIN Marshr m on
+
+-- мне мало времени

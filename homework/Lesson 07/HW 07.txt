@@ -1,0 +1,110 @@
+
+-- Задание 6.
+
+CREATE TABLE Patients
+(  Person_ID        INT IDENTITY,
+   First_Name		NVARCHAR(100), 
+   Last_Name		NVARCHAR(100),
+   SSN              UNIQUEIDENTIFIER DEFAULT NEWID(),  --UNIQUE CLUSTERED INDEX IDX_V1,--  
+   Email            AS (UPPER(LEFT(First_Name, 1)) + LOWER(LEFT(Last_Name, 3)) + '@gmail.com'),
+   Temp             FLOAT,
+   Created_Date     DATE
+);
+
+SELECT *
+FROM Patients;
+
+
+----Задание 7.
+
+INSERT INTO Patients (First_Name, Last_Name, Temp, Created_Date)
+VALUES 
+    ('Robert', 'Downey Jr.', 36.5, '2025-01-07'),
+	('Anna', 'Shmidt', 37.9, '2024-12-15'),
+	('Elizabeth', 'Hurley', 36.7, '2024-11-28'),
+	('Michael', 'Jordan', 38.1, '2025-01-23');
+
+SELECT *
+FROM Patients;
+
+
+----Задание 8.
+
+ALTER TABLE Patients
+ADD TempType AS (
+            CASE WHEN Temp < 37 THEN '<37°C' 
+			     WHEN Temp > 37 THEN '>37°C'
+				 END);
+
+SELECT *
+FROM Patients;
+
+----Задание 9.
+
+CREATE VIEW Patients_v
+AS
+SELECT (Temp * 9 / 5 +32) AS Temp_F
+FROM Patients;
+
+SELECT *
+FROM Patients_v;
+
+DROP VIEW Patients_v;
+DROP TABLE Patients;
+
+----Задание 10.
+
+CREATE FUNCTION dbo.ufdF(
+    @Temp FLOAT
+)
+RETURNS FLOAT
+AS 
+BEGIN 
+    RETURN (@Temp * 9 / 5) + 32; 
+END;
+
+SELECT dbo.ufdF(36.6) AS Temp_F;
+
+DROP FUNCTION dbo.ufdF;
+---
+
+  -- почему не работает эта функция? Делал все, как было на уроке, работает только через dbo.
+CREATE FUNCTION Temp.ufdF(
+      @Temp FLOAT
+)
+RETURNS FLOAT
+AS 
+BEGIN 
+     RETURN (@Temp * 9 / 5) + 32;
+END;
+
+SELECT Temp.ufdF(36.6) Temp_F;
+
+DROP FUNCTION Temp.ufdFж
+
+-- Задание 11.
+
+
+SELECT DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1)) AS Firs_day_of_next_month, 
+       CASE WHEN DATENAME(WEEKDAY, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))) IN ('Saturday', 'Sunday')
+	        THEN  CASE 
+			WHEN DATENAME(WEEKDAY, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))) =  'Saturday'
+			THEN DATEADD(DAY, 2, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))) 
+			ELSE DATEADD(DAY, 1, DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1)))
+		END
+	ELSE DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))  
+	END first_weekday;
+
+
+DECLARE @DateM DATE
+SET @DateM = DATEADD(DAY, 1, EOMONTH(DATEADD(MONTH, 1, GETDATE()), -1))
+
+SELECT @DateM AS Firs_day_of_next_month, 
+       CASE WHEN DATENAME(WEEKDAY, @DateM) IN ('Saturday', 'Sunday')
+	        THEN  CASE 
+			WHEN DATENAME(WEEKDAY, @DateM) =  'Saturday'
+			THEN DATEADD(DAY, 2, @DateM) 
+			ELSE @DateM
+		END
+	ELSE @DateM 
+	END first_weekday;
