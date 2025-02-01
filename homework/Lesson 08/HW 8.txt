@@ -1,0 +1,30 @@
+Задание 3.
+
+SELECT *
+FROM HumanResources.Employee;
+
+SELECT NationalIDNumber
+FROM HumanResources.Employee
+WHERE BusinessEntityID = 15;
+---
+
+UPDATE HumanResources.Employee   -- я сначала в самой таблице изменил, а потом создал HumanResources.EmployeeCopy и потом в ней повторил операцию обновления.
+SET NationalIDNumber = 879341111
+WHERE BusinessEntityID = 15;
+
+---
+SELECT BusinessEntityID , NationalIDNumber
+INTO HumanResources.EmployeeCopy
+FROM HumanResources.Employee;
+
+---
+SELECT *
+FROM HumanResources.EmployeeCopy;  - в этой таблице все BusinessEntityID идут в разброс
+
+UPDATE HumanResources.EmployeeCopy
+SET NationalIDNumber = 879341111
+WHERE BusinessEntityID = 15;
+
+SELECT NationalIDNumber
+FROM HumanResources.EmployeeCopy
+WHERE BusinessEntityID = 15;
