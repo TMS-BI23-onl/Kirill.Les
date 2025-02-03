@@ -3,3 +3,7 @@ Well done!
 It has to be a code present for each task, not only for deleting :)
 "Check how much rows are there..." can also be done with a query.
 Please, add all other parts of code.
+
+
+--UPDATE
+Yes, you understood correctly :)
