@@ -1,0 +1,4 @@
+Well done!
+
+A copy of the table is not an object I was waiting for, to be honest :)
+The task was to create a procedure.
