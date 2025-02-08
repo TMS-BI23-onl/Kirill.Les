@@ -1,0 +1,32 @@
+Задание №2
+
+CREATE TABLE Persons_test (
+      first_name VARCHAR(50) NOT NULL,
+	  last_name VARCHAR(50) NOT NULL
+);
+
+SELECT *
+FROM Persons_test;
+
+DROP TABLE Persons_test;
+
+BULK INSERT Persons_test
+FROM 'E:\BI-23 onl\Черновики\HW 10\MOCK_DATA3.csv'
+WITH (FORMAT = 'CSV');
+
+CREATE TABLE Persons_test_1m(
+      ID INT IDENTITY,
+      FirstName VARCHAR(50) NOT NULL,
+	  LastName VARCHAR(50) NOT NULL
+);
+
+INSERT INTO Persons_test_1m (FirstName, LastName)
+SELECT TOP 1000000 t1.first_name AS FirstName, t2.last_name AS LastName
+FROM Persons_test AS t1 CROSS JOIN Persons_test AS t2;
+
+SELECT *
+FROM Persons_test_1m;
+
+Задание №3
+
+Может использоваться с CREATE
