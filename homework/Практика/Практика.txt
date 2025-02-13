@@ -1,0 +1,41 @@
+Аптека
+3.
+
+SELECT Name, StandardCost
+FROM Production.Product
+WHERE StandardCost = (SELECT MAX(StandardCost)
+                      FROM Production.Product);
+
+SELECT TOP 1 WITH TIES Name, StandardCost
+FROM Production.Product
+ORDER BY StandardCost DESC;
+
+SELECT Name, StandardCost
+FROM 
+    (SELECT Name, StandardCost, RANK() OVER (ORDER BY StandardCost DESC) AS rn
+    FROM Production.Product) AS t 
+WHERE rn = 1;
+
+1.
+
+SELECT *
+FROM Person.PersonPhone;
+
+SELECT *
+FROM Person.Person;
+
+SELECT pp.FirstName, ppf.PhoneNumber, LEFT (ppf.PhoneNumber, 3) AS KodCi
+FROM  Person.Person pp JOIN Person.PersonPhone ppf ON pp.BusinessEntityID = ppf.BusinessEntityID
+WHERE ppf.PhoneNumber LIKE '4 %' AND ppf.PhoneNumber LIKE '%5';
+
+2.
+
+SELECT 
+     CASE WHEN EGE(???) BETWEEN 17 AND 20 THEN 'Adolescence'
+	 CASE WHEN EGE BETWEEN 21 AND 59 THEN 'Adults'
+	 CASE WHEN EGE BETWEEN 60 AND 75 THEN 'Elderly'
+	 CASE WHEN EGE BETWEEN 76 AND 90 THEN 'Senile'
+
+
+
+FROM [HumanResources].[Employee]
