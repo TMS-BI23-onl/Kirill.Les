@@ -1,0 +1,5 @@
+Задание №3
+
+SELECT p.FirstName, p.LastName, f.FirstName, f.LastName
+FROM People p LEFT JOIN People f а ON p ID_Father = f.ID
+WHERE FirstName = 'Дмитриев'
