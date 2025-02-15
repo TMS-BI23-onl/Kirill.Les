@@ -1,0 +1,73 @@
+0 Пр.
+3.
+
+SELECT Name, StandardCost
+FROM Production.Product
+WHERE StandardCost = (SELECT MAX(StandardCost)
+                      FROM Production.Product);
+
+SELECT TOP 1 WITH TIES Name, StandardCost
+FROM Production.Product
+ORDER BY StandardCost DESC;
+
+SELECT Name, StandardCost
+FROM 
+    (SELECT Name, StandardCost, RANK() OVER (ORDER BY StandardCost DESC) AS rn
+    FROM Production.Product) AS t 
+WHERE rn = 1;
+
+
+4. Аптека
+
+Поставщики: ID, Наименование поставщика, адрес, телефон, руководитель.
+Препараты: ID, Наименование препарата, фасовка, дата выпуска, цена.
+Типы препаратов: ID, Тип препарата.
+Аптеки: ID, Наименование аптеки, адрес, телефон.
+Работники аптеки: ID, ФИО, паспорт, гендер, категория работника (провизора).
+Чеки: ID, Дата чека, скидка (программа лояльности).
+Продажи: ID, Цена, количество.
+
+4 а. Найти поставщика и названия препаратов, чьи препараты продавались 
+больше всего в аптеках в 2023 г.
+
+4 в. Найти  двух провизоров с наибольшим количеством продаж и вывести
+наименование аптеки большими буквами в которой они работают.
+------------
+
+3.
+
+SELECT Year,
+       ISNULL([January], 0) AS January,
+	   ISNULL([February], 0) AS February,
+       ISNULL([December], 0) AS December
+FROM
+    (SELECT YEAR(StartDate) AS Year,
+	        CASE MONTH(StartDate)
+                WHEN 1 THEN 'January'
+	            WHEN 2 THEN 'February'
+	            WHEN 12 THEN 'December'
+		  END AS MonthName,
+		  OrderQty
+     FROM Production.WorkOrder
+     WHERE MONTH(StartDate) IS NOT NULL 
+	       AND MONTH(StartDate) IN (1, 2, 12)
+) AS SourseTable
+PIVOT
+(
+    SUM(OrderQty)
+	FOR MonthName IN ([January], [February], [December])
+) AS PivotTable
+ORDER BY Year;
+
+
+5.
+Эта не решается пока. Постоянно пишет ошибку.
+
+
+
+
+
+
+
+
+
