@@ -1,0 +1,40 @@
+2.
+
+UPDATE User
+SET Age = Age / 3
+WHERE Name = 'Андрей';
+
+SELECT Name, (Age / 3) AS ag_s
+FROM User
+WHERE Name = 'Андрей';
+
+3.
+SELECT TOP 1 WITH TIES Name, Price
+FROM Product
+ORDER BY Price DESC;
+
+
+SELECT Name, Price
+FROM Product
+WHERE Price = (SELECT MAX(Price)
+              FROM Product);
+
+SELECT *
+FROM 
+      (SELECT Name, Price, RANK () OVER (ORDER BY Price DESC) rn
+      FROM ProductProduct) t
+WHERE rn = 1;
+
+
+SELECT *
+FROM 
+      (SELECT Name, Price, MAX (Price) OVER () AS max_rn
+      FROM ProductProduct) t
+WHERE Price = max_rn;
+
+4.
+
+SELECT UserID, Name, Phone, Age
+FROM Users
+WHERE (Phone LIKE '+3%4') OR (Age > 35);
+
