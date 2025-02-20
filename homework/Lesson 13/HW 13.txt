@@ -1,0 +1,117 @@
+Задание №3.
+
+Мне кажется AdventureWorks2017 относится к OLTP-системе, а AdventureWorksDW2017 к OLAP-системе.
+Соответственно это ЗВЕЗДА и СНЕЖИНКА. 
+В первой быстро выполняются добавление, удаление и обновление данных, запросы работают медленнее 
+и они более длинные. Таблицы нормализованы и оптимизированы для транзакций.
+В снежинке быстрое чтение данных, лучше для аналитики. Таблицы денормализованы. 
+
+Задание №1.
+
+Ресторан -- Rest.Temp
+sale: sale_id, dish_id, waiter_id, customer_id, quantity, price, saledate, payment_id
+waiter: waiter_id, name, datebirth
+dish: dish_id, name, type_id
+type: type_id, type
+customer: customer_id, name, passport, phone, email, gender
+feedback: feedback_id, dish_id, customer_id, rating
+payment: payment_id, payment_method
+
+1.
+Вывести транспонированную таблицу, где для каждой категории рейтинга (<3, 3-4.5, 4.5-5) и типа блюда будет показана средняя 
+стоимость блюд с 1 по 31 декабря 2024 г.
+
+2.
+Вывести самое популярное блюдо в каждую субботу января 2025 г (рез-т селекта - дата, блюдо)
+
+1.
+
+SELECT
+    type.type,
+    AVG(CASE WHEN feedback.rating < 3 THEN sale.price END) AS rating_less_3,
+    AVG(CASE WHEN feedback.rating >= 3 AND feedback.rating < 4.5 THEN sale.price END) AS rating_3_to_4_5,
+    AVG(CASE WHEN feedback.rating >= 4.5 AND feedback.rating <= 5 THEN sale.price END) AS rating_4_5_to_5
+FROM sale
+JOIN dish D ON sale S D.dish_id = S.dish_id
+JOIN type T ON D.type_id = T.type_id
+JOIN feedback F ON S.dish_id = F.dish_id
+WHERE sale.saledate BETWEEN '2024-12-01' AND '2024-12-31'
+GROUP BY type.type;
+
+--------
+2.
+
+WITH SaturdaySales AS (
+    SELECT
+        sale.saledate,
+        dish.name,
+        COUNT(sale.dish_id) AS dish_count
+    FROM sale
+    JOIN dish ON sale.dish_id = dish.dish_id
+    WHERE DATENAME(weekday, sale.saledate) = 'Saturday'
+      AND sale.saledate BETWEEN '2025-01-01' AND '2025-01-31'
+    GROUP BY sale.saledate, dish.name
+)
+SELECT
+    saledate,
+    name AS most_popular_dish
+FROM (
+    SELECT
+        saledate,
+        name,
+        dish_count,
+        RANK() OVER (PARTITION BY saledate ORDER BY dish_count DESC) AS rank
+    FROM SaturdaySales
+) AS ranked
+WHERE rank = 1;
+
+Задание с 11 лекции MERGE.
+
+CREATE TABLE Teams(
+	team_id	int identity,
+	team_name	varchar(20),
+	team_code	char(3),
+	main_sponsor	nvarchar(30),
+	director_name	nvarchar(30)
+);
+
+INSERT INTO Teams (team_name, team_code, main_sponsor, director_name)
+VALUES
+('Ferrari', 'FER', 'HP', 'Fred Vasseur'),
+('Aston Martin', 'AMR', 'Cognizant', 'Lawrence Stroll'),
+('McLaren', 'MCL', 'OKX', 'Andreas Seidl'),
+('Red Bull', 'RBR', 'Oracle', 'Christian Horner');
+
+CREATE TABLE TeamsTest(
+	team_id	int identity,
+	team_name	varchar(20),
+	team_code	char(3),
+	main_sponsor	nvarchar(30),
+	director_name	nvarchar(30)
+);
+
+INSERT INTO TeamsTest (team_name, team_code, main_sponsor, director_name)
+VALUES
+('Ferrari', 'FER', 'HP', 'Fred Vasseur'),
+('Aston Martin', 'AMR', 'Aramco', 'awrence Stroll'),
+('McLaren', 'MCL', 'OKX', 'Andreas Seidl'),
+('Red Bull Racing', 'RBR', 'Oracle', 'Dr Marco'),
+('Mercedes AMG', 'AMG', 'Petronas', 'Toto Wolff');
+
+SELECT *
+FROM Teams;
+
+SELECT *
+FROM TeamsTest;
+
+MERGE Teams target
+USING TeamsTest source ON target.team_code = source.team_code
+
+WHEN MATCHED AND (target.team_name != source.team_name OR target.main_sponsor != source.main_sponsor OR
+	          target.director_name != source.director_name)
+     THEN UPDATE SET target.team_name = source.team_name, target.main_sponsor = source.main_sponsor,
+	          target.director_name = source.director_name
+WHEN NOT MATCHED BY TARGET
+     THEN INSERT (team_name, team_code, main_sponsor, director_name)
+	 VALUES (source.team_name, source.team_code, source.main_sponsor, source.director_name)
+;
