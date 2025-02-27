@@ -1,0 +1,39 @@
+Задание №1.
+
+CREATE VIEW TopEmployeesRating AS
+SELECT 
+    EmployeesID,
+    EmployeeName,
+    TotalServices,
+    CASE 
+        WHEN TotalServices >= 10 THEN 3
+        WHEN TotalServices BETWEEN 5 AND 9 THEN 2
+        ELSE 1
+    END AS TotalPoints
+FROM (
+    SELECT 
+        e.EmployeesID,
+        CONCAT(e.FirstName, ' ', e.LastName) AS EmployeeName,
+        COUNT(o.OrdersID) AS TotalServices
+    FROM 
+        Employees e
+    JOIN 
+        Orders o ON e.EmployeesID = o.EmployeesID
+    GROUP BY 
+        e.EmployeesID, e.FirstName, e.LastName
+) AS ServiceCounts
+ORDER BY 
+    TotalPoints DESC
+OFFSET 0 ROWS FETCH NEXT 50 ROWS ONLY; 
+
+Задание №2.
+
+a. В диаграмме (Bar chart) столбики должны быть шире, чем расстояние между ними. Дополнительное описание справа - лишнее, оно дублирует информацию по оси Х.
+
+b. Тут возможно присутствует фактор лжи. График должен быть в 2d. Не совсем понятна информация на оси Х, она разного содержания, что такое характеризует TOP4 и NEXT 46?
+
+c. Этот график лучше перевернуть, т.к. не читаем текст по оси Х, значения оси Y лучше расположить на оси Х.
+Возможно сами столбцы, как и в первом задании, надо сделать шире. И не понятно, какую статистику показывает эта диаграмма, если все значения столбцов одинаковы. 
+
+
+

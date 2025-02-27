@@ -1,0 +1,104 @@
+Это дополнение к HW 11 задание 1. Если я правильно понял про создание нескольких строк.
+
+SELECT TOP 5
+    ns.ServiceName,
+    ns.BasePrice,
+    CONCAT(e.FirstName, ' ', e.LastName) AS EmployeeName,
+    bs.SalonName,
+    CAST(ns.BasePrice * e.CategoryCoefficient AS DECIMAL(10, 2)) AS PriceWithCoefficient
+FROM 
+    Orders o
+JOIN 
+    NameService ns ON o.ServicesID = ns.ServicesID
+JOIN 
+    Employees e ON o.EmployeesID = e.EmployeesID
+JOIN 
+    BeautySalon bs ON o.SalonID = bs.SalonID
+ORDER BY 
+    o.DateOrder;
+
+Наполнение всех таблиц делал через создание временных таблиц, т.к. в случае удаления, изменения или
+добавления, возникают проблемы с PK, а если пробовать удалять полностью таблицу, то возникают конфликт
+с FK. 
+
+BULK INSERT ClienTsest
+FROM 'E:\BI-23 onl\Наполнение таблицы\Clients\Data Cl.csv'
+WITH (
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    FIRSTROW = 2
+);
+
+INSERT INTO #Specialties (CategoryEmployeesT, CategoryCoefficientT)
+VALUES 
+(N'Мастер по маникюру 2-го разряда', 1.00),
+(N'Мастер по маникюру и педикюру 3-го разряда', 1.20),
+(N'Мастер по маникюру и педикюру 4-го разряда', 1.35),
+(N'Мастер по маникюру и педикюру 5-го разряда', 1.50),
+(N'Визажист 3-го разряда', 1.10),
+(N'Визажист 4-го разряда', 1.25),
+(N'Визажист 5-го разряда', 1.40),
+(N'БАРБЕР', 1.00),
+(N'PRO-БАРБЕР', 1.20),
+(N'TOP-БАРБЕР', 1.50),
+(N'Мастер по бровям и ресницам 2-го разряда', 1.20),
+(N'Мастер по бровям и ресницам 3-го разряда', 1.35),
+(N'Мастер по бровям и ресницам 4-го разряда', 1.50),
+(N'Массажист', 1.00),
+(N'Мастер ОПГ массажа', 1.00),
+(N'Парикмахер', 1.10),
+(N'Парикмахер-стилист', 1.30),
+(N'TOP-Мастер парикмахер', 1.50),
+(N'АРТ-Мастер парикмахер', 1.80);
+
+BULK INSERT EmployeesTest
+FROM 'E:\BI-23 onl\Наполнение таблицы\Employees\DataEmpl.csv'
+WITH (
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    FIRSTROW = 2
+);
+
+
+BULK INSERT TempSalon
+FROM 'E:\BI-23 onl\Наполнение таблицы\Salon\Company1000.csv'
+WITH (
+    FIELDTERMINATOR = ',',
+    ROWTERMINATOR = '\n',
+    FIRSTROW = 2
+);
+
+С заполнением дат были проблемы, для заслонения таблицы Orders, пришлось создавать три таблицы с отдельными
+датами, дата заказа, дата визита, дата отказа, а потом их объединить и заполнить.
+
+CREATE TABLE DateCan (
+    OrdersID INT IDENTITY PRIMARY KEY,
+    DateCancel DATE NULL
+);
+
+BULK INSERT DateCan
+FROM 'E:\BI-23 onl\Наполнение таблицы\data can.csv'
+WITH (
+    FIELDTERMINATOR = '\n',
+    ROWTERMINATOR = '\n',
+    FIRSTROW = 2
+);
+
+
+INSERT INTO CombinedDates (OrdersID, DateOrder, DateVisit, DateCancel)
+SELECT 
+    COALESCE(o.OrdersID, v.OrdersID, c.OrdersID) AS OrdersID,
+    o.DateOrder,
+    v.DateVisit,
+    c.DateCancel
+FROM 
+    DateOr o
+FULL OUTER JOIN 
+    DateVi v ON o.OrdersID = v.OrdersID
+FULL OUTER JOIN 
+    DateCan c ON o.OrdersID = c.OrdersID OR v.OrdersID = c.OrdersID;
+
+
+
+
+
