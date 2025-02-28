@@ -1,0 +1,44 @@
+SELECT *
+FROM Orders;
+
+CREATE TABLE OrderTemp_t (
+    OrderID INT PRIMARY KEY,
+    DateOrder DATE NOT NULL,
+    DateVisit DATE NULL,
+    DateCancel DATE NULL,
+    ServiceName VARCHAR(250),
+    ClientFirstName VARCHAR(50),
+    ClientLastName VARCHAR(50),
+    SalonName VARCHAR(100),
+    EmployeeFirstName VARCHAR(50),
+    EmployeeLastName VARCHAR(50)
+);
+
+INSERT INTO OrderTemp_t (OrderID, DateOrder, DateVisit, DateCancel, ServiceName, ClientFirstName, ClientLastName, SalonName, EmployeeFirstName, EmployeeLastName)
+SELECT 
+    OrderID, DateOrder, DateVisit, DateCancel, ServiceName, ClientFirstName, ClientLastName, SalonName, EmployeeFirstName, EmployeeLastName
+FROM (
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY o.DateOrder) + 1000000 AS OrderID,
+        o.DateOrder, 
+        o.DateVisit, 
+        o.DateCancel, 
+        ns.ServiceName,
+        cl.FirstName AS ClientFirstName,
+        cl.LastName AS ClientLastName,
+        bs.SalonName,
+        em.FirstName AS EmployeeFirstName,
+        em.LastName AS EmployeeLastName
+    FROM 
+        Orders o 
+    JOIN 
+        NameService ns ON o.ServicesID = ns.ServicesID
+    JOIN 
+        Clients cl ON o.ClientsID = cl.ClientsID
+    JOIN 
+        BeautySalon bs ON o.SalonID = bs.SalonID
+    JOIN 
+        Employees em ON o.EmployeesID = em.EmployeesID
+) AS Subquery
+WHERE 
+    OrderID BETWEEN 1000001 AND 1000010;
