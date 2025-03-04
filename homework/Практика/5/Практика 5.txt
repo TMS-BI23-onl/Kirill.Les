@@ -1,0 +1,42 @@
+1. 
+SELECT ProductSubcategoryID
+FROM Production.Product
+GROUP BY ProductSubcategoryID
+HAVING MIN(Weight) > 150;
+
+2.
+
+SELECT TOP 1 WITH TIES Name, StandardCost
+FROM Production.Product
+ORDER BY StandardCost DESC;
+
+SELECT Name, StandardCost
+FROM Production.Product
+WHERE StandardCost = (SELECT MAX(StandardCost) FROM Production.Product);
+
+SELECT *
+FROM (SELECT Name, StandardCost, RANK() OVER (ORDER BY StandardCost DESC) AS rnk
+      FROM Production.Product) t
+WHERE rnk = 1;
+
+SELECT *
+FROM (SELECT Name, StandardCost, MAX(StandardCost) OVER () AS max_rnk
+      FROM Production.Product) t
+WHERE StandardCost = max_rnk;
+
+4.
+SELECT p.ProductID, p.ProductName, COUNT (o.OrdersID) AS order_count
+ FROM 
+    Products p
+LEFT JOIN 
+    Orders o ON p.ProductID = o.ProductID
+WHERE 
+    o.OrderDate >= DATEADD(YEAR, -5, GETDATE()) 
+GROUP BY 
+    p.ProductID, p.ProductName;
+
+3. Select c.FirstName
+FROM Customers с
+WHERE CustomersID NOT IN  (Select CustomersID  o
+                         FROM Customers o
+						 WHERE DATEDIFF(day, ShipDate, GETDATE ())) <= 365;
