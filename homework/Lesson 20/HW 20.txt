@@ -1,0 +1,57 @@
+Задание №3.
+
+SELECT TOP 1 r.Region_Name, COUNT(e.EmployeeID) AS cnt
+FROM Regions r
+            JOIN Countries c ON r.RegionID = c.RegionID
+            JOIN Locations l ON c.CountryID = l.CountryID
+            JOIN Departments d ON l.LocationID = d.LocationID
+            JOIN Employees e ON d.DepartmentID = e.DepartmentID
+GROUP BY r.Region_Name
+ORDER BY cnt DESC;
+
+Задание №1.
+
+SELECT e.ManagerID, m.First_Name, m.Last_Name, COUNT(e.EmployeeID) AS cnt
+FROM Employees e
+             JOIN Employees m ON e.ManagerID = m.EmployeeID
+GROUP BY e.ManagerID, m.First_Name, m.Last_Name
+HAVING COUNT(e.EmployeeID) > 6;
+
+Задание №2.
+
+SELECT d.Department_Name,
+       MIN(e.Salary - (e.Salary * e.commission_pct / 100)) AS MinSalary, 
+	   MAX(e.Salary - (e.Salary * e.commission_pct / 100)) AS MaxSalary
+FROM Employees e 
+            JOIN Departments d ON e.DepartmentID = d.DepartmentID
+GROUP BY d.Department_Name;
+
+Задание №4.
+
+SELECT t.Department_Name, ((t.AvgSelary - x.AllAvgSelary) / x.AllAvgSelary)* 100 AS SalaryDifferencePercen
+FROM
+(
+SELECT d.Department_Name, AVG(e.Salary) AS AvgSelary 
+FROM Employees e 
+            JOIN Departments d ON e.DepartmentID = d.DepartmentID
+GROUP BY d.Department_Name) t,
+(SELECT AVG(e.Salary) AS AllAvgSelary 
+FROM Employees e) x;
+
+Задание №5.
+
+SELECT e.First_Name, e.Last_Name, d.Department_Name
+FROM Job_History jh
+              JOIN Employees e ON jh.EmployeeID = e.EmployeeID
+              JOIN Departments d ON jh.DepartmentID = d.DepartmentID
+GROUP BY e.First_Name, e.Last_Name, d.Department_Name
+HAVING SUM(DATEDIFF(YEAR, jh.Start_Date, jh.End_Date)) > 10;
+
+Задание №6.
+
+SELECT First_Name, Last_Name
+FROM (
+SELECT First_Name, Last_Name
+          ROW_NUMBER() OVER (ORDER BY Salary DESC) AS SalaryRank
+FROM Employees) AS RankedEmployees 
+WHERE SalaryRank BETWEEN 5 AND 10;
